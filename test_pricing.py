@@ -25,11 +25,11 @@ def test_ticket_price_cat_error():
     with pytest.raises(ValueError):
         ticket_price('vipp')
 
-def test_line_total_quant_error():
+def test_line_total_quant_error0():
     with pytest.raises(ValueError):
         line_total('vip', 0)
 
-def test_line_total_quant_error():
+def test_line_total_quant_error_minus1():
     with pytest.raises(ValueError):
         line_total('vip', -1)
 
@@ -133,4 +133,58 @@ def test_order_total_ticket_negatif() :
     ]
     with raises( ValueError, match= "contenir au moins un"):
         order_total(i,None)
-        
+
+
+#EXO4 
+
+@pytest.mark.parametrize("category, quantity, expected", [ 
+    ("early_bird", 1, 2495),
+    ("standard", 2, 3500 *2),
+    ("vip", 5, 7500 *5),
+], ids=["1_early_bird", "2_standard", "5_vip"])
+def test_line_total_all(category, quantity,expected):
+    assert line_total(category, quantity) == expected 
+
+
+#CAS order_total avec plusieurs catégories
+
+@pytest.mark.parametrize("items, expected", [
+    ([{"category": "vip", "quantity": 1}], 7500),
+    ([{"category": "standard", "quantity": 2}, {"category": "vip", "quantity": 1}], 3500 * 2 + 7500),
+    ([{"category": "early_bird", "quantity": 3}, {"category": "vip", "quantity": 3}], 2495 * 3 + 7500 * 3),
+], ids=["1_vip", "2_standard_1_vip", "3_early_bird_3_vip_total_6"])
+def test_order_total_param(items, expected):
+    assert order_total(items) == expected
+
+
+def test_order_total_multi_categories_total_7_refuse():
+    items = [{"category": "early_bird", "quantity": 4}, {"category": "vip", "quantity": 3}]
+    with pytest.raises(ValueError, match=f"Maximum {MAX_TICKETS_PER_ORDER}"):
+        order_total(items)
+
+
+#CAS ERREUR
+
+@pytest.mark.parametrize("quantity", [0, -1], ids=["quantity_error0", "quantity_error_minus1"])
+def test_line_total_quantity_error(quantity):
+    with pytest.raises(ValueError):
+        line_total("vip", quantity)
+
+
+#CAS 6billet MAX 
+
+@pytest.mark.parametrize("quantity", [1, 5, 6], ids=["1_min_ok", "5_ok", "6_limite_ok"])
+def test_order_total_quantite_ok(quantity):
+    assert order_total([{"category": "standard", "quantity": quantity}]) == 3500 * quantity
+
+
+@pytest.mark.parametrize("quantity, message", [
+    (-1, "au moins un"),
+    (0, "au moins un"),
+    (7, f"Maximum {MAX_TICKETS_PER_ORDER}"),
+], ids=["minus1_refuse", "0_refuse", "7_refuse"])
+def test_order_total_quantite_refusee(quantity, message):
+    with pytest.raises(ValueError, match=message):
+        order_total([{"category": "standard", "quantity": quantity}])
+
+

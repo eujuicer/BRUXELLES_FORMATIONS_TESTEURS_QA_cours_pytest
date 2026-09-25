@@ -74,15 +74,6 @@ def test_pif_str():
 
 
 
-
-
-
-
-
-
-
-
-
 # Revision 1-3
 from booking import ticket_price
 
