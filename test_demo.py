@@ -75,6 +75,15 @@ def test_pif_str():
 
 
 
+
+
+
+
+
+
+
+
+
 # Revision 1-3
 from booking import ticket_price
 
@@ -179,17 +188,76 @@ def test_should_OVER_KILL(value, potential_match, error):
         assert pl_type_error(value) == True
 
 
-#5 fixtures
+
+# 5 Fixtures
+
+user = {"name": "Leslie", "formation": "QA test"}
 
 def get_user_name(user):
     return user["name"]
 
-def test_user_leslie():
-    user = {"name": "Leslie", "formation": "QA test"}
-    assert get_user_name(user) == 'Leslie'
+def get_user_forma(user):
+    return user["formation"]
 
-def test_user_leslie():
-    user = {"name": "Leslie", "formation": "QA test"}
-    assert get_user_name(user) == 'Leslie'
+def test_user_leslie(get_user):
+    assert get_user_name(get_user) == 'Leslie'
+
+def test_user_leslie2(get_user):
+    assert get_user_forma(get_user) == 'QA test'
 
 
+
+# Mocks
+
+def send_creation_confirm(user, email_service, confirm):
+    if confirm:
+        result = email_service.send(user["name"])
+        email_service.display()
+        return result["ok"]
+    email_service.error()
+
+
+def test_send_creation(get_user):
+    mock_email = Mock()
+    mock_email.send.return_value = {"ok": True}
+    mock_email.display.return_value = {"ok": True}
+
+    # assert send_creation_confirm(get_user, mock_email, True) is True
+
+    send_creation_confirm(get_user, mock_email, True)
+
+    mock_email.send.assert_called_once()
+    mock_email.send.assert_called_once_with("Leslie")
+    
+
+def test_send_creation_fail(get_user):
+    mock_email = Mock()
+    mock_email.send.return_value = {"ok": True}
+    mock_email.display.return_value = {"ok": True}
+    send_creation_confirm(get_user, mock_email, False)
+    
+
+    mock_email.send.assert_not_called()
+
+
+
+def test_email_error(get_user):
+    mock_email = Mock()
+    mock_email.error.side_effect = ValueError("hehe je suis une erreure")
+
+    with pytest.raises(ValueError):
+        send_creation_confirm(get_user, mock_email, False)
+
+
+def test_send_creation_mock_fixture(get_user, email_mock_service):
+
+    # assert send_creation_confirm(get_user, mock_email, True) is True
+
+    # On  peut rajouter des methodes au mocks apres fixture
+    email_mock_service.print.return_value = 'print'
+
+    send_creation_confirm(get_user, email_mock_service, True)
+
+    email_mock_service.send.assert_called_once()
+    email_mock_service.send.assert_called_once_with("Leslie")
+    assert email_mock_service.send.call_count == 5
