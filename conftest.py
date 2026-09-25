@@ -36,3 +36,22 @@ def email_mock_service():
     mock_email.display.return_value = {"ok": True}
 
     return mock_email
+
+
+@pytest.fixture
+def payment_ok():
+    payment = Mock()
+    payment.charge.return_value = {"success": True, "transaction_id": "tx_1"}
+    return payment
+
+@pytest.fixture
+def email_service():
+    return Mock()
+
+@pytest.fixture
+def active_user():
+    return {"email": "leslie@test.com", "active": True, "payment_token": "tok_123"}
+
+@pytest.fixture
+def event():
+    return {"id": 1, "title": "Concert", "available": 10}

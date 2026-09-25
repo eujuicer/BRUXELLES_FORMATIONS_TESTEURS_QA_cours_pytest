@@ -14,14 +14,19 @@ fixture avec yield.
 Exercice 6 (mocks) : ensuite seulement, concevez la vraie suite des interactions
 de create_order avec ses dépendances (voir énoncé).
 """
+import pytest
 from unittest.mock import Mock
 from booking import create_order
 
-payment = Mock()
-payment.charge.return_value = {
-    "success": True,
-    "transaction_id": "tx_1"
-}
-email = Mock()
+
 
 # À vous d'écrire le cas nominal puis de travailler les fixtures.
+
+def test_create_order_nominal(active_user, event, payment_ok, email_service):
+    items = [{"category": "standard", "quantity": 2}]
+    order = create_order(event, items, active_user, payment_ok, email_service)
+    assert order["status"] == "confirmed"
+    assert order["total_cents"] == 7000
+    assert order["tickets"] == 2
+    assert order["user_email"] == "leslie@test.com"
+    assert order["transaction_id"] == "tx_1"
