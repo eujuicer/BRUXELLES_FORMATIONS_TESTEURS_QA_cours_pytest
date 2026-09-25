@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import Mock
 
 def somme(a, b):
     resultat = a + b
@@ -176,3 +177,19 @@ def test_should_OVER_KILL(value, potential_match, error):
             pl_type_error(value)
     else:
         assert pl_type_error(value) == True
+
+
+#5 fixtures
+
+def get_user_name(user):
+    return user["name"]
+
+def test_user_leslie():
+    user = {"name": "Leslie", "formation": "QA test"}
+    assert get_user_name(user) == 'Leslie'
+
+def test_user_leslie():
+    user = {"name": "Leslie", "formation": "QA test"}
+    assert get_user_name(user) == 'Leslie'
+
+

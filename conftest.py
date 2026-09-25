@@ -5,3 +5,10 @@ Vide au départ : vous y déplacerez vos fixtures au Bloc 5, quand plusieurs
 fichiers auront besoin des mêmes données ou des mêmes mocks.
 Pytest découvre ce fichier automatiquement : aucune importation nécessaire.
 """
+import pytest 
+
+@pytest.fixture
+def get_user():
+    print('connexion')
+    fixture_user = {}
+
