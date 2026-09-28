@@ -6,6 +6,7 @@ Lancez : pytest test_legacy.py -v
 """
 from legacy_pricing import loyalty_discount_percent, price_with_loyalty
 
+
 # À vous d'écrire les tests.
 def test_low_loyalty_discount_percent():
     assert loyalty_discount_percent(0) == 0

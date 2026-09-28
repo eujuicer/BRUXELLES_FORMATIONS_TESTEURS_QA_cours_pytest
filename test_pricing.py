@@ -4,9 +4,14 @@ Lancez : pytest test_pricing.py -v
 """
 import pytest
 from pytest import raises
-from booking import MAX_TICKETS_PER_ORDER
 
-from booking import ticket_price, line_total, apply_promo, order_total
+from booking import (
+    MAX_TICKETS_PER_ORDER,
+    apply_promo,
+    line_total,
+    order_total,
+    ticket_price,
+)
 
 # À vous d'écrire les tests.
 

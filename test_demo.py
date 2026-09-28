@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import Mock
+
+import pytest
+
 
 def somme(a, b):
     resultat = a + b
@@ -64,7 +66,7 @@ def function_au_pif(value):
 
 def test_pif_str():
     with pytest.raises(ValueError, match=ERROR_WHILE_STRING):
-        function_au_pif(True)
+        function_au_pif("abc")
 
 
 
@@ -86,6 +88,7 @@ def test_pif_str():
 
 # Revision 1-3
 from booking import ticket_price
+
 
 def test_nominal_ticket():
     assert ticket_price('vip') == 7500
@@ -260,4 +263,4 @@ def test_send_creation_mock_fixture(get_user, email_mock_service):
 
     email_mock_service.send.assert_called_once()
     email_mock_service.send.assert_called_once_with("Leslie")
-    assert email_mock_service.send.call_count == 5
+    assert email_mock_service.send.call_count == 1

@@ -45,6 +45,12 @@ def payment_ok():
     return payment
 
 @pytest.fixture
+def payment_refused():
+    payment = Mock()
+    payment.charge.return_value = {"success": False, "transaction_id": None}
+    return payment
+
+@pytest.fixture
 def email_service():
     return Mock()
 
@@ -55,3 +61,29 @@ def active_user():
 @pytest.fixture
 def event():
     return {"id": 1, "title": "Concert", "available": 10}
+
+
+@pytest.fixture
+def tracked_event():
+    ev = {"id": 1, "title": "Concert", "available": 10}
+    print(f"\n[avant test] stock disponible : {ev['available']}")
+    yield ev
+    print(f"[après test] stock disponible : {ev['available']}")
+
+
+@pytest.fixture
+def inactive_user():
+    return {"email": "leslie@test.com", "active": False, "payment_token": "tok_123"}
+
+@pytest.fixture
+def refund_ok():
+    payment_gateway = Mock()
+    payment_gateway.refund.return_value = {"success": True}
+    return payment_gateway
+
+@pytest.fixture
+def refund_not_ok():
+    payment_gateway = Mock()
+    payment_gateway.refund.return_value = {"success": False}
+    return payment_gateway
+    
