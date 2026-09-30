@@ -74,5 +74,5 @@ def test_create_order_raises_when_stock_is_insufficient(active_user, email_servi
     with pytest.raises(ValueError):
         create_order(event, items, active_user, payment_ok, email_service)
 
-    payment_ok.charge.assert_not_called()
+    payment_ok.charge.assert_not_called()   
     email_service.send.assert_not_called()

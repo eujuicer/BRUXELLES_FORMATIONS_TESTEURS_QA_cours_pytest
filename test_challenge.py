@@ -41,3 +41,39 @@ def test_process_refund_failed(refund_not_ok, email_service):
         process_refund(order, refund_not_ok, email_service, hours_before_event=72)
     email_service.send.assert_not_called()
 
+
+def test_process_refund_raises_when_order_not_confirmed(refund_ok, email_service):
+    order = {
+        "status": "pending",
+        "total_cents": 7000,
+        "transaction_id": "tx_1",
+        "user_email": "leslie@test.com",
+    }
+    with pytest.raises(ValueError):
+        process_refund(order, refund_ok, email_service, hours_before_event=72)
+    refund_ok.refund.assert_not_called()
+    email_service.send.assert_not_called()
+
+def test_process_refund_raises_when_too_late(refund_ok, email_service):
+    order = {
+        "status": "confirmed",
+        "total_cents": 7000,
+        "transaction_id": "tx_1",
+        "user_email": "leslie"
+    }
+    with pytest.raises(ValueError):
+        process_refund(order, refund_ok, email_service, hours_before_event=47)
+    refund_ok.refund.assert_not_called()
+    email_service.send.assert_not_called()
+
+
+def test_process_refund_allowed_at_48h(refund_ok, email_service):
+    order = {
+        "status": "confirmed",
+        "total_cents": 7000,
+        "transaction_id": "tx_1",
+        "user_email": "leslie@test.com",
+    }
+    result = process_refund(order, refund_ok, email_service, hours_before_event=48)
+    assert result["status"] == "refunded"
+    assert result["amount_cents"] == 7000
